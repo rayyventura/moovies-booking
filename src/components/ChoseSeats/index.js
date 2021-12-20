@@ -7,6 +7,7 @@ import styled from "styled-components"
 import { Link } from 'react-router-dom';
 import ReturnButton from '../../ReturnButton';
 
+let pickedSeats = [];
 export default function ChoseSeats({setInfos,info}) {
     const {idSession} = useParams();
     const [pickSeat,setPickSeat]=useState();
@@ -14,7 +15,6 @@ export default function ChoseSeats({setInfos,info}) {
     const [name,setName]=useState('');
     const [cpf,setCpf]=useState('');
     const [isFilled, setIsFilled] = useState(false);
-    let pickedSeats = [];
     const data = {
     
     }
@@ -28,17 +28,21 @@ export default function ChoseSeats({setInfos,info}) {
         setTimeout(()=> {const promise = axios.get(`https://mock-api.driven.com.br/api/v4/cineflex/showtimes/${idSession}/seats`);
         promise.then(answer=>setPickSeat(answer.data));
         promise.catch(error=>console.log(error));}, 1200);
+        console.log(pickSeat);
     }, []);
     function isClicked(index,info){
         selected[index]=false;
         setSelected([...selected]);
         setUnavailableSeat(false);
+        pickedSeats.find((item,index)=>item===info.id && pickedSeats.splice(index,1));
     }
     function selectSeat(index,info){
         if(!info.isAvailable){
             setUnavailableSeat(true); 
             return;
         }
+        
+        info.id && pickedSeats.push(info.id);
         setUnavailableSeat(false);
         selected[index]=true;
         setSelected([...selected]);
@@ -63,12 +67,12 @@ export default function ChoseSeats({setInfos,info}) {
 
     }
     function verifyData(){
-        selected.map((item,index)=>{
-            if(item){
-              pickedSeats.push(index+1)
-            }
-        });
-       
+        // selected.map((item,index)=>{
+        //     if(item){
+        //       pickedSeats.push(index+1)
+        //     }
+        // });
+       console.log(pickedSeats)
         data.ids=pickedSeats;
         data.name=name;
         data.cpf=cpf;
@@ -101,6 +105,7 @@ export default function ChoseSeats({setInfos,info}) {
                     key={info.id}
                     isAvailable={info.isAvailable}
                     selected={selected[index]}
+                    id={info.id}
                     onClick={()=>selected[index]? isClicked(index,info): selectSeat(index,info)}
                     >{info.name}</GetSeat>
                     ))
