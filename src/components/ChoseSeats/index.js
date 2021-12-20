@@ -67,12 +67,7 @@ export default function ChoseSeats({setInfos,info}) {
 
     }
     function verifyData(){
-        // selected.map((item,index)=>{
-        //     if(item){
-        //       pickedSeats.push(index+1)
-        //     }
-        // });
-       console.log(pickedSeats)
+        
         data.ids=pickedSeats;
         data.name=name;
         data.cpf=cpf;
