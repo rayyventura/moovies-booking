@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
 import LoadingGif from '../../LoadingGif';
@@ -8,153 +8,155 @@ import { Link } from 'react-router-dom';
 import ReturnButton from '../../ReturnButton';
 
 let pickedSeats = [];
-export default function ChoseSeats({setInfos,info}) {
-    const {idSession} = useParams();
-    const [pickSeat,setPickSeat]=useState();
-    const [unavailableSeat,setUnavailableSeat]=useState(false);
-    const [name,setName]=useState('');
-    const [cpf,setCpf]=useState('');
-    const [isFilled, setIsFilled] = useState(false);
-    const data = {
-    
-    }
-  
-    const [selected,setSelected]=useState([false,false,false,false,false,false,false,false,false,false,false,false,false,false,
-        false, false,false,false,false,false,false,false,false,false,false,false,false,false,
-        false,false,false,false,false,false,false,false,false,false,false,false,false,false,
-        false,false,false,false,false,false,false]);
+export default function ChoseSeats({ setInfos, info }) {
+  const { idSession } = useParams();
+  const [pickSeat, setPickSeat] = useState();
+  const [unavailableSeat, setUnavailableSeat] = useState(false);
+  const [name, setName] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [isFilled, setIsFilled] = useState(false);
+  let numberSeat = [];
+  const data = {
 
-    useEffect(() => {
-        setTimeout(()=> {const promise = axios.get(`https://mock-api.driven.com.br/api/v4/cineflex/showtimes/${idSession}/seats`);
-        promise.then(answer=>setPickSeat(answer.data));
-        promise.catch(error=>console.log(error));}, 1200);
-        console.log(pickSeat);
-    }, []);
-    function isClicked(index,info){
-        selected[index]=false;
-        setSelected([...selected]);
-        setUnavailableSeat(false);
-        pickedSeats.find((item,index)=>item===info.id && pickedSeats.splice(index,1));
-    }
-    function selectSeat(index,info){
-        if(!info.isAvailable){
-            setUnavailableSeat(true); 
-            return;
-        }
-        
-        info.id && pickedSeats.push(info.id);
-        setUnavailableSeat(false);
-        selected[index]=true;
-        setSelected([...selected]);
+  }
 
+  const [selected, setSelected] = useState([false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      const promise = axios.get(`https://mock-api.driven.com.br/api/v4/cineflex/showtimes/${idSession}/seats`);
+      promise.then(answer => setPickSeat(answer.data));
+      promise.catch(error => console.log(error));
+    }, 1200);
+  }, []);
+  function isClicked(index, info) {
+    selected[index] = false;
+    setSelected([...selected]);
+    setUnavailableSeat(false);
+    pickedSeats.find((item, index) => item === info.id && pickedSeats.splice(index, 1));
+  }
+  function selectSeat(index, info) {
+    if (!info.isAvailable) {
+      setUnavailableSeat(true);
+      return;
     }
 
-    function verifyName(e){
-        setName(e.target.value); 
-        if(name!=='' && cpf!==''){
-            setIsFilled(true);
-        }else{
-            setIsFilled(false);
-        }
-    }
-    function verifyCpf(e){
-        setCpf(e.target.value); 
-        if(name!=='' && cpf!==''){
-            setIsFilled(true);
-        }else{
-            setIsFilled(false);
-        }
+    info.id && pickedSeats.push(info.id);
+    setUnavailableSeat(false);
+    selected[index] = true;
+    setSelected([...selected]);
 
+  }
+
+  function verifyName(e) {
+    setName(e.target.value);
+    if (name !== '' && cpf !== '') {
+      setIsFilled(true);
+    } else {
+      setIsFilled(false);
     }
-    function verifyData(){
-        
-        data.ids=pickedSeats;
-        data.name=name;
-        data.cpf=cpf;
-        setInfos({...info, ids: data.ids, name:data.name,cpf:data.cpf});
-        const promise = axios.post("https://mock-api.driven.com.br/api/v4/cineflex/seats/book-many",data);
-        promise.then(answer=>console.log(answer));
-        promise.catch(error=>console.log(error));
-       
+  }
+  function verifyCpf(e) {
+    setCpf(e.target.value);
+    if (name !== '' && cpf !== '') {
+      setIsFilled(true);
+    } else {
+      setIsFilled(false);
     }
-    
-    return (
-        <>
-        {
-            pickSeat?
-            <TitleSection title="Selecione o(s) Assento(s)"/>:""
-        }
-        { pickSeat?
-            
-            <div >
-                 <ReturnButton />
-                 {
-                    unavailableSeat && <UnavailableSeat>Assento Indisponível</UnavailableSeat>
-                 }
-                <Seats >
-                    <section className='all-seats'>
-                    {
-                pickSeat.seats.map((info,index)=>(
-                    <GetSeat
+
+  }
+  function verifyData() {
+    selected.map((item, index) => item && numberSeat.push(index + 1));
+    data.ids = pickedSeats;
+    data.name = name;
+    data.cpf = cpf;
+    setInfos({ ...info, ids: data.ids, name: data.name, cpf: data.cpf });
+    const promise = axios.post("https://mock-api.driven.com.br/api/v4/cineflex/seats/book-many", data);
+    promise.then(answer => console.log(answer));
+    promise.catch(error => console.log(error));
+
+  }
+
+  return (
+    <>
+      {
+        pickSeat ?
+          <TitleSection title="Selecione o(s) Assento(s)" /> : ""
+      }
+      {pickSeat ?
+
+        <div >
+          <ReturnButton />
+          {
+            unavailableSeat && <UnavailableSeat>Assento Indisponível</UnavailableSeat>
+          }
+          <Seats >
+            <section className='all-seats'>
+              {
+                pickSeat.seats.map((info, index) => (
+                  <GetSeat
                     className='seats-appearance'
                     key={info.id}
                     isAvailable={info.isAvailable}
                     selected={selected[index]}
                     id={info.id}
-                    onClick={()=>selected[index]? isClicked(index,info): selectSeat(index,info)}
-                    >{info.name}</GetSeat>
-                    ))
-                    }
-                    
-                    </section>
-                    <section className="seat-status" >
-                        <div className='status'>
-                            <div className='selected seats-appearance'></div>
-                            <p>Selecionado</p>
-                        </div>
-                        <div className='status'> 
-                            <div className='available seats-appearance'></div>
-                            <p>Disponível</p>
-                        </div>
-                        <div className='status'>
-                            <div className='unavailable seats-appearance'></div>
-                            <p>Indisponível</p>
-                        </div>
-                    </section>
-                </Seats>
-                <Input>
-                <div>
-                    <label htmlFor="name">Nome do Comprador</label>
-                    <input type="text" placeholder='Digite seu Nome' name="name" onChange={(e)=>verifyName(e)} value={name}/>
-                </div>
-                <div>
+                    onClick={() => selected[index] ? isClicked(index, info) : selectSeat(index, info)}
+                  >{info.name}</GetSeat>
+                ))
+              }
 
-                    <label htmlFor="cpf">CPF do Comprador</label>
-                    <input type="text" placeholder='000.000.000-00' name="cpf" onChange={(e)=> verifyCpf(e)} value={cpf}/>
-                </div>
-
-             <Link to="/sucesso">
-                <Button isFilled={isFilled} onClick={()=>verifyData()}>
-                    <button>  Reservar Assento(s) </button>
-               </Button>
-            </Link>
-                </Input>
-               <Footer>
-                    <div className='movie-img'>
-                        <img src={pickSeat.movie.posterURL} alt="capa de filme" />
-                    </div>
-                    <div className='date-info'>
-                    <p>{pickSeat.movie.title}</p>
-                    <p>{pickSeat.day.weekday} - {pickSeat.day.date}</p>
-                    </div>
-                </Footer>
+            </section>
+            <section className="seat-status" >
+              <div className='status'>
+                <div className='selected seats-appearance'></div>
+                <p>Selecionado</p>
+              </div>
+              <div className='status'>
+                <div className='available seats-appearance'></div>
+                <p>Disponível</p>
+              </div>
+              <div className='status'>
+                <div className='unavailable seats-appearance'></div>
+                <p>Indisponível</p>
+              </div>
+            </section>
+          </Seats>
+          <Input>
+            <div>
+              <label htmlFor="name">Nome do Comprador</label>
+              <input type="text" placeholder='Digite seu Nome' name="name" onChange={(e) => verifyName(e)} value={name} />
             </div>
-            :
-            <LoadingGif />
-        }
-        </>
+            <div>
 
-    )
+              <label htmlFor="cpf">CPF do Comprador</label>
+              <input type="text" placeholder='000.000.000-00' name="cpf" onChange={(e) => verifyCpf(e)} value={cpf} />
+            </div>
+
+            <Link to="/sucesso">
+              <Button isFilled={isFilled} onClick={() => verifyData()}>
+                <button>  Reservar Assento(s) </button>
+              </Button>
+            </Link>
+          </Input>
+          <Footer>
+            <div className='movie-img'>
+              <img src={pickSeat.movie.posterURL} alt="capa de filme" />
+            </div>
+            <div className='date-info'>
+              <p>{pickSeat.movie.title}</p>
+              <p>{pickSeat.day.weekday} - {pickSeat.day.date}</p>
+            </div>
+          </Footer>
+        </div>
+        :
+        <LoadingGif />
+      }
+    </>
+
+  )
 }
 
 const Seats = styled.div`
@@ -223,8 +225,8 @@ const Seats = styled.div`
 
 `
 const GetSeat = styled.div`
-background-color: ${(props)=>props.isAvailable? "#C3CFD9" : "#F7C52B"};
-background-color: ${(props)=>props.selected? "#8DD7CF" : ""};
+background-color: ${(props) => props.isAvailable ? "#C3CFD9" : "#F7C52B"};
+background-color: ${(props) => props.selected ? "#8DD7CF" : ""};
 `
 const UnavailableSeat = styled.p`
 
@@ -280,14 +282,14 @@ const Input = styled.div`
         }
     }
 `
-const Button =  styled.div` 
+const Button = styled.div` 
 
      background: #E8833A;
      border-radius: 3px;
 
      width: 225px;
      height: 45px;
-     cursor:${props=>props.isFilled? "pointer" : "not-allowed"};
+     cursor:${props => props.isFilled ? "pointer" : "not-allowed"};
 
      margin: 27px 0 10px 0;
      button{
