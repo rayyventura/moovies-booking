@@ -66,18 +66,18 @@ export default function ChoseSeats({ setInfos, info }) {
     } else {
       setIsFilled(false);
     }
-
   }
+
   function verifyData() {
     selected.map((item, index) => item && numberSeat.push(index + 1));
     data.ids = pickedSeats;
     data.name = name;
     data.cpf = cpf;
-    setInfos({ ...info, ids: data.ids, name: data.name, cpf: data.cpf });
+    setInfos({ ...info, ids: data.ids, name: data.name, cpf: data.cpf, seats: numberSeat });
     const promise = axios.post("https://mock-api.driven.com.br/api/v4/cineflex/seats/book-many", data);
     promise.then(answer => console.log(answer));
     promise.catch(error => console.log(error));
-
+    console.log(numberSeat);
   }
 
   return (
