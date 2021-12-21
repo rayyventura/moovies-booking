@@ -1,4 +1,4 @@
-# CineFLex
+# CineFlex
 **Site Plubished at:** https://cineflexmovies.netlify.app/
 
 ## Movie Booking App
