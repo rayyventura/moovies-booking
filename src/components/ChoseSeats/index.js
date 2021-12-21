@@ -83,7 +83,7 @@ export default function ChoseSeats({ setInfos, info }) {
     const promise = axios.post("https://mock-api.driven.com.br/api/v4/cineflex/seats/book-many", data);
     promise.then(answer => console.log(answer));
     promise.catch(error => console.log(error));
-    if (numberSeat.length === 0 || name === "" || cpf === "") {
+    if (numberSeat.length === 0 || name === "" || cpf.length < 14) {
       setErrorMessage(true)
       return;
     } else {
