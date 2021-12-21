@@ -72,6 +72,7 @@ export default function ChoseSeats({ setInfos, info }) {
     } else {
       setIsFilled(false);
     }
+
   }
 
   function verifyData() {
@@ -83,13 +84,20 @@ export default function ChoseSeats({ setInfos, info }) {
     const promise = axios.post("https://mock-api.driven.com.br/api/v4/cineflex/seats/book-many", data);
     promise.then(answer => console.log(answer));
     promise.catch(error => console.log(error));
-    if (numberSeat.length === 0 || name === "" || cpf.length < 14) {
+    if (numberSeat.length === 0 || name === "" || cpf.length !== 14) {
       setErrorMessage(true)
       return;
     } else {
       setErrorMessage(false);
     }
     navigate('/sucesso');
+  }
+  function editCpf() {
+
+    if (cpf.length === 11 && cpf[3] !== ".") {
+      let value = cpf.replace(/^([\d]{3})([\d]{3})([\d]{3})([\d]{2})$/, "$1.$2.$3-$4");
+      setCpf(value);
+    }
   }
 
   return (
@@ -145,7 +153,7 @@ export default function ChoseSeats({ setInfos, info }) {
             <div>
 
               <label htmlFor="cpf">CPF do Comprador</label>
-              <input type="text" placeholder='000.000.000-00' name="cpf" onChange={(e) => verifyCpf(e)} value={cpf} />
+              <input type="text" placeholder='12345678900' name="cpf" maxLength="14" onChange={(e) => verifyCpf(e)} value={cpf} onBlur={() => editCpf()} />
             </div>
 
 
