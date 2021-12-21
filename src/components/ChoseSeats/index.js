@@ -4,8 +4,8 @@ import axios from 'axios';
 import LoadingGif from '../../LoadingGif';
 import TitleSection from '../ TitleSection';
 import styled from "styled-components"
-import { Link } from 'react-router-dom';
 import ReturnButton from '../../ReturnButton';
+import { useNavigate } from 'react-router-dom'
 
 let pickedSeats = [];
 export default function ChoseSeats({ setInfos, info }) {
@@ -16,6 +16,8 @@ export default function ChoseSeats({ setInfos, info }) {
   const [cpf, setCpf] = useState('');
   const [isFilled, setIsFilled] = useState(false);
   let numberSeat = [];
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(false);
   const data = {
 
   }
@@ -31,14 +33,16 @@ export default function ChoseSeats({ setInfos, info }) {
       promise.then(answer => setPickSeat(answer.data));
       promise.catch(error => console.log(error));
     }, 1200);
-  }, []);
+  }, [idSession]);
   function isClicked(index, info) {
+    setErrorMessage(false);
     selected[index] = false;
     setSelected([...selected]);
     setUnavailableSeat(false);
     pickedSeats.find((item, index) => item === info.id && pickedSeats.splice(index, 1));
   }
   function selectSeat(index, info) {
+    setErrorMessage(false);
     if (!info.isAvailable) {
       setUnavailableSeat(true);
       return;
@@ -52,6 +56,7 @@ export default function ChoseSeats({ setInfos, info }) {
   }
 
   function verifyName(e) {
+    setErrorMessage(false);
     setName(e.target.value);
     if (name !== '' && cpf !== '') {
       setIsFilled(true);
@@ -60,6 +65,7 @@ export default function ChoseSeats({ setInfos, info }) {
     }
   }
   function verifyCpf(e) {
+    setErrorMessage(false);
     setCpf(e.target.value);
     if (name !== '' && cpf !== '') {
       setIsFilled(true);
@@ -78,6 +84,13 @@ export default function ChoseSeats({ setInfos, info }) {
     promise.then(answer => console.log(answer));
     promise.catch(error => console.log(error));
     console.log(numberSeat);
+    if (pickedSeats.length === 0 || name === "" || cpf === "") {
+      setErrorMessage(true)
+      return;
+    } else {
+      setErrorMessage(false);
+    }
+    navigate('/successo');
   }
 
   return (
@@ -126,6 +139,7 @@ export default function ChoseSeats({ setInfos, info }) {
           </Seats>
           <Input>
             <div>
+              <div className={errorMessage ? "error-message" : "display-none"}>Preencha os Dados Corretamente</div>
               <label htmlFor="name">Nome do Comprador</label>
               <input type="text" placeholder='Digite seu Nome' name="name" onChange={(e) => verifyName(e)} value={name} />
             </div>
@@ -135,11 +149,11 @@ export default function ChoseSeats({ setInfos, info }) {
               <input type="text" placeholder='000.000.000-00' name="cpf" onChange={(e) => verifyCpf(e)} value={cpf} />
             </div>
 
-            <Link to="/sucesso">
-              <Button isFilled={isFilled} onClick={() => verifyData()}>
-                <button>  Reservar Assento(s) </button>
-              </Button>
-            </Link>
+
+            <Button isFilled={isFilled} onClick={() => verifyData()}>
+              <button>  Reservar Assento(s) </button>
+            </Button>
+
           </Input>
           <Footer>
             <div className='movie-img'>
@@ -251,6 +265,17 @@ const Input = styled.div`
     padding: 58px 0 80px 0;
     color:#293845;
     font-size: 18px;
+
+    .error-message{
+      color: red;
+
+      margin-bottom: 15px;
+
+      font-weight: 500;
+    }
+    .display-none{
+      display: none;
+    }
     input{
         all:unset;
 
