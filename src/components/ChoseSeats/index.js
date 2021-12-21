@@ -90,7 +90,7 @@ export default function ChoseSeats({ setInfos, info }) {
     } else {
       setErrorMessage(false);
     }
-    navigate('/successo');
+    navigate('/sucesso');
   }
 
   return (
